@@ -1,12 +1,26 @@
 let router = require('express').Router()
+let db = require('../models')
 
 router.get('/', (req, res) => {
-    res.render('shops/index')
+    db.shop.findAll()
+    .then(shops => {
+        res.render('shops/index', { shops })
+    })
+    .catch(err => {
+        console.log('Error', err)
+        res.send('Error')
+    })
 })
 
 router.post('/', (req, res) => {
-    console.log(req.body)
-    res.send('Make new shoppe')
+    db.shop.create(req.body)
+    .then(newShop => {
+        res.redirect('/shops')
+    })
+    .catch(err => {
+        console.log('Error', err)
+        res.send('Error')
+    })
 })
 
 router.get('/new', (req, res) => {
@@ -14,7 +28,14 @@ router.get('/new', (req, res) => {
 })
 
 router.get('/:id', (req, res) => {
-    res.render('shops.show')
+    db.shop.findByPk(req.params.id)
+    .then(shop => {
+        res.render('shops/show', { shop })
+    })
+    .catch(err => {
+        console.log('Error', err)
+        res.send('Error')
+    })
 })
 
 module.exports = router
